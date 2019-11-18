@@ -1,40 +1,32 @@
-import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
-import store from '@/store'
+import { IErrorLogState } from "@/store/type";
+import { MutationTree, ActionTree } from 'vuex';
 
-interface IErrorLog {
-  err: Error
-  vm: any
-  info: string
-  url: string
+const state: IErrorLogState = {
+  logs: [],
 }
 
-export interface IErrorLogState {
-  logs: IErrorLog[]
-}
+const mutations: MutationTree<IErrorLogState> = {
+  ADD_ERROR_LOG(state, log) {
+    state.logs.push(log)
+  },
 
-@Module({ dynamic: true, store, name: 'errorLog' })
-class ErrorLog extends VuexModule implements IErrorLogState {
-  public logs: IErrorLog[] = []
-
-  @Mutation
-  private ADD_ERROR_LOG(log: IErrorLog) {
-    this.logs.push(log)
-  }
-
-  @Mutation
-  private CLEAR_ERROR_LOG() {
-    this.logs.splice(0)
-  }
-
-  @Action
-  public AddErrorLog(log: IErrorLog) {
-    this.ADD_ERROR_LOG(log)
-  }
-
-  @Action
-  public ClearErrorLog() {
-    this.CLEAR_ERROR_LOG()
+  CLEAR_ERROR_LOG(state) {
+    state.logs.splice(0)
   }
 }
 
-export const ErrorLogModule = getModule(ErrorLog)
+const actions: ActionTree<IErrorLogState, IErrorLogState> = {
+  AddErrorLog({ commit }, log) {
+    commit('ADD_ERROR_LOG', log)
+  },
+  ClearErrorLog({ commit }) {
+    commit('CLEAR_ERROR_LOG')
+  }
+}
+
+export default {
+  namespaced: false,
+  state,
+  mutations,
+  actions,
+}

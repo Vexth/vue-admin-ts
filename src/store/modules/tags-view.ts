@@ -1,138 +1,104 @@
-import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
-import { Route } from 'vue-router'
-import store from '@/store'
+import { ITagsViewState } from "@/store/type";
+import { MutationTree, ActionTree } from 'vuex';
 
-export interface ITagView extends Partial<Route> {
-  title?: string
+const state: ITagsViewState = {
+  visitedViews: [],
+  cachedViews: [],
 }
 
-export interface ITagsViewState {
-  visitedViews: ITagView[]
-  cachedViews: (string | undefined)[]
-}
-
-@Module({ dynamic: true, store, name: 'tagsView' })
-class TagsView extends VuexModule implements ITagsViewState {
-  public visitedViews: ITagView[] = []
-  public cachedViews: (string | undefined)[] = []
-
-  @Mutation
-  private ADD_VISITED_VIEW(view: ITagView) {
-    if (this.visitedViews.some(v => v.path === view.path)) return
-    this.visitedViews.push(
+const mutations: MutationTree<ITagsViewState> = {
+  ADD_VISITED_VIEW(state, view) {
+    if (state.visitedViews.some(v => v.path === view.path)) return
+    state.visitedViews.push(
       Object.assign({}, view, {
         title: view.meta.title || 'no-name'
       })
     )
-  }
-
-  @Mutation
-  private ADD_CACHED_VIEW(view: ITagView) {
-    if (this.cachedViews.includes(view.name)) return
+  },
+  ADD_CACHED_VIEW(state, view) {
+    if (state.cachedViews.includes(view.name)) return
     if (!view.meta.noCache) {
-      this.cachedViews.push(view.name)
+      state.cachedViews.push(view.name)
     }
-  }
-
-  @Mutation
-  private DEL_VISITED_VIEW(view: ITagView) {
-    for (const [i, v] of this.visitedViews.entries()) {
+  },
+  DEL_VISITED_VIEW(state, view) {
+    for (const [i, v] of state.visitedViews.entries()) {
       if (v.path === view.path) {
-        this.visitedViews.splice(i, 1)
+        state.visitedViews.splice(i, 1)
         break
       }
     }
-  }
-
-  @Mutation
-  private DEL_CACHED_VIEW(view: ITagView) {
-    const index = this.cachedViews.indexOf(view.name)
-    index > -1 && this.cachedViews.splice(index, 1)
-  }
-
-  @Mutation
-  private DEL_OTHERS_VISITED_VIEWS(view: ITagView) {
-    this.visitedViews = this.visitedViews.filter(v => {
+  },
+  DEL_CACHED_VIEW(state, view) {
+    const index = state.cachedViews.indexOf(view.name)
+    index > -1 && state.cachedViews.splice(index, 1)
+  },
+  DEL_OTHERS_VISITED_VIEWS(state, view) {
+    state.visitedViews = state.visitedViews.filter(v => {
       return v.meta.affix || v.path === view.path
     })
-  }
-
-  @Mutation
-  private DEL_OTHERS_CACHED_VIEWS(view: ITagView) {
-    const index = this.cachedViews.indexOf(view.name)
+  },
+  DEL_OTHERS_CACHED_VIEWS(state, view) {
+    const index = state.cachedViews.indexOf(view.name)
     if (index > -1) {
-      this.cachedViews = this.cachedViews.slice(index, index + 1)
+      state.cachedViews = state.cachedViews.slice(index, index + 1)
     } else {
       // if index = -1, there is no cached tags
-      this.cachedViews = []
+      state.cachedViews = []
     }
-  }
-
-  @Mutation
-  private DEL_ALL_VISITED_VIEWS() {
+  },
+  DEL_ALL_VISITED_VIEWS(state) {
     // keep affix tags
-    const affixTags = this.visitedViews.filter(tag => tag.meta.affix)
-    this.visitedViews = affixTags
-  }
-
-  @Mutation
-  private DEL_ALL_CACHED_VIEWS() {
-    this.cachedViews = []
-  }
-
-  @Mutation
-  private UPDATE_VISITED_VIEW(view: ITagView) {
-    for (let v of this.visitedViews) {
+    const affixTags = state.visitedViews.filter(tag => tag.meta.affix)
+    state.visitedViews = affixTags
+  },
+  DEL_ALL_CACHED_VIEWS(state) {
+    state.cachedViews = []
+  },
+  UPDATE_VISITED_VIEW(state, view) {
+    for (let v of state.visitedViews) {
       if (v.path === view.path) {
         v = Object.assign(v, view)
         break
       }
     }
   }
-
-  @Action
-  public addView(view: ITagView) {
-    this.ADD_VISITED_VIEW(view)
-    this.ADD_CACHED_VIEW(view)
-  }
-
-  @Action
-  public addVisitedView(view: ITagView) {
-    this.ADD_VISITED_VIEW(view)
-  }
-
-  @Action
-  public delView(view: ITagView) {
-    this.DEL_VISITED_VIEW(view)
-    this.DEL_CACHED_VIEW(view)
-  }
-
-  @Action
-  public delCachedView(view: ITagView) {
-    this.DEL_CACHED_VIEW(view)
-  }
-
-  @Action
-  public delOthersViews(view: ITagView) {
-    this.DEL_OTHERS_VISITED_VIEWS(view)
-    this.DEL_OTHERS_CACHED_VIEWS(view)
-  }
-
-  @Action
-  public delAllViews() {
-    this.DEL_ALL_VISITED_VIEWS()
-    this.DEL_ALL_CACHED_VIEWS()
-  }
-
-  @Action
-  public delAllCachedViews() {
-    this.DEL_ALL_CACHED_VIEWS()
-  }
-
-  @Action
-  public updateVisitedView(view: ITagView) {
-    this.UPDATE_VISITED_VIEW(view)
-  }
 }
 
-export const TagsViewModule = getModule(TagsView)
+const actions: ActionTree<ITagsViewState, ITagsViewState> = {
+  addView({ commit }, view) {
+    commit('ADD_VISITED_VIEW', view)
+    commit('ADD_CACHED_VIEW', view)
+  },
+  addVisitedView({ commit }, view) {
+    commit('ADD_VISITED_VIEW', view)
+  },
+  delView({ commit }, view) {
+    commit('DEL_VISITED_VIEW', view)
+    commit('DEL_CACHED_VIEW', view)
+  },
+  delCachedView({ commit }, view) {
+    commit('DEL_CACHED_VIEW', view)
+  },
+  delOthersViews({ commit }, view) {
+    commit('DEL_OTHERS_VISITED_VIEWS', view)
+    commit('DEL_OTHERS_CACHED_VIEWS', view)
+  },
+  delAllViews({ commit }) {
+    commit('DEL_ALL_VISITED_VIEWS')
+    commit('DEL_ALL_CACHED_VIEWS')
+  },
+  delAllCachedViews({ commit }) {
+    commit('DEL_ALL_CACHED_VIEWS')
+  },
+  updateVisitedView({ commit }, view) {
+    commit('UPDATE_VISITED_VIEW', view)
+  },
+}
+
+export default {
+  namespaced: false,
+  state,
+  mutations,
+  actions,
+}

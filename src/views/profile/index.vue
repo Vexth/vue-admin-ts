@@ -42,7 +42,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { UserModule } from '@/store/modules/user'
 import Account from './components/Account.vue'
 import Activity from './components/Activity.vue'
 import Timeline from './components/Timeline.vue'
@@ -76,19 +75,19 @@ export default class extends Vue {
   private activeTab = 'activity'
 
   get name() {
-    return UserModule.name
+    return this.$store.getters.name
   }
 
   get email() {
-    return UserModule.email
+    return this.$store.getters.email
   }
 
   get avatar() {
-    return UserModule.avatar
+    return this.$store.getters.avatar
   }
 
   get roles() {
-    return UserModule.roles
+    return this.$store.getters.roles
   }
 
   created() {

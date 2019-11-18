@@ -120,7 +120,6 @@ import { cloneDeep } from 'lodash'
 import { Component, Vue } from 'vue-property-decorator'
 import { RouteConfig } from 'vue-router'
 import { Tree } from 'element-ui'
-import { AppModule } from '@/store/modules/app'
 import { getRoutes, getRoles, createRole, deleteRole, updateRole } from '@/api/roles'
 
 interface Role {

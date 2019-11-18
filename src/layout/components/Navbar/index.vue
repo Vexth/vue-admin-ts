@@ -71,8 +71,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
-import { UserModule } from '@/store/modules/user'
 import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import ErrorLog from '@/components/ErrorLog/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
@@ -95,23 +93,23 @@ import SizeSelect from '@/components/SizeSelect/index.vue'
 })
 export default class Navbar extends Vue {
   get sidebar() {
-    return AppModule.sidebar
+    return this.$store.getters.sidebar
   }
 
   get device() {
-    return AppModule.device.toString()
+    return this.$store.getters.device.toString()
   }
 
   get avatar() {
-    return UserModule.avatar
+    return this.$store.getters.avatar
   }
 
   private toggleSideBar() {
-    AppModule.ToggleSideBar(false)
+    this.$store.dispatch('ToggleSideBar', false)
   }
 
   private async logout() {
-    await UserModule.LogOut()
+    await this.$store.dispatch('LogOut')
     this.$router.push(`/login?redirect=${this.$route.fullPath}`)
   }
 }

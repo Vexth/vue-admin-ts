@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { ErrorLogModule } from '@/store/modules/error-log'
+import store from "@/store";
 import { isArray } from '@/utils/validate'
 import settings from '@/settings'
 
@@ -15,11 +15,6 @@ const checkNeed = () => {
 
 if (checkNeed()) {
   Vue.config.errorHandler = function(err, vm, info) {
-    ErrorLogModule.AddErrorLog({
-      err,
-      vm,
-      info,
-      url: window.location.href
-    })
+    store.dispatch('AddErrorLog', { err, vm, info, url: window.location.href })
   }
 }

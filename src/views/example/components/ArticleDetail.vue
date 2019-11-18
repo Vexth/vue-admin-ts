@@ -158,8 +158,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { isValidURL } from '@/utils/validate'
 import { getArticle, defaultArticleData } from '@/api/articles'
 import { getUsers } from '@/api/users'
-import { AppModule } from '@/store/modules/app'
-import { TagsViewModule, ITagView } from '@/store/modules/tags-view'
 import MaterialInput from '@/components/MaterialInput/index.vue'
 import Sticky from '@/components/Sticky/index.vue'
 import Tinymce from '@/components/Tinymce/index.vue'
@@ -167,6 +165,8 @@ import UploadImage from '@/components/UploadImage/index.vue'
 import Warning from './Warning.vue'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 import { Form } from 'element-ui'
+
+import { ITagView } from "@/store/type";
 
 @Component({
   name: 'ArticleDetail',
@@ -234,7 +234,7 @@ export default class ArticleDetail extends Vue {
   }
 
   get lang() {
-    return AppModule.language
+    return this.$store.getters.language
   }
 
   // set and get is useful when the data
@@ -291,7 +291,7 @@ export default class ArticleDetail extends Vue {
     const tagView = this.tempTagView
     if (tagView) {
       tagView.title = `${title}-${this.postForm.id}`
-      TagsViewModule.updateVisitedView(tagView)
+      this.$store.dispatch('updateVisitedView', tagView)
     }
   }
 

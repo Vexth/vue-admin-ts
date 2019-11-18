@@ -1,7 +1,8 @@
-import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
 import { RouteConfig } from 'vue-router'
 import { asyncRoutes, constantRoutes } from '@/router'
-import store from '@/store'
+
+import { IPermissionState } from "@/store/type";
+import { MutationTree, ActionTree } from 'vuex';
 
 const hasPermission = (roles: string[], route: RouteConfig) => {
   if (route.meta && route.meta.roles) {
@@ -25,32 +26,33 @@ export const filterAsyncRoutes = (routes: RouteConfig[], roles: string[]) => {
   return res
 }
 
-export interface IPermissionState {
-  routes: RouteConfig[]
-  dynamicRoutes: RouteConfig[]
+const state: IPermissionState = {
+  routes: [],
+  dynamicRoutes: [],
 }
 
-@Module({ dynamic: true, store, name: 'permission' })
-class Permission extends VuexModule implements IPermissionState {
-  public routes: RouteConfig[] = []
-  public dynamicRoutes: RouteConfig[] = []
-
-  @Mutation
-  private SET_ROUTES(routes: RouteConfig[]) {
-    this.routes = constantRoutes.concat(routes)
-    this.dynamicRoutes = routes
+const mutations: MutationTree<IPermissionState> = {
+  SET_ROUTES(state, routes) {
+    state.routes = constantRoutes.concat(routes)
+    state.dynamicRoutes = routes
   }
+}
 
-  @Action
-  public GenerateRoutes(roles: string[]) {
+const actions: ActionTree<IPermissionState, IPermissionState> = {
+  GenerateRoutes({ commit }, roles) {
     let accessedRoutes
     if (roles.includes('admin')) {
       accessedRoutes = asyncRoutes
     } else {
       accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
     }
-    this.SET_ROUTES(accessedRoutes)
+    commit('SET_ROUTES', accessedRoutes)
   }
 }
 
-export const PermissionModule = getModule(Permission)
+export default {
+  namespaced: false,
+  state,
+  mutations,
+  actions,
+}

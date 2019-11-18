@@ -76,7 +76,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { ErrorLogModule } from '@/store/modules/error-log'
 
 @Component({
   name: 'ErrorLog'
@@ -85,12 +84,12 @@ export default class ErrorLog extends Vue {
   private dialogTableVisible = false
 
   get errorLogs() {
-    return ErrorLogModule.logs
+    return this.$store.getters.logs
   }
 
   private clearAll() {
     this.dialogTableVisible = false
-    ErrorLogModule.ClearErrorLog()
+    this.$store.dispatch('ClearErrorLog')
   }
 }
 </script>

@@ -1,92 +1,72 @@
-import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
 import { getSidebarStatus, getSize, setSidebarStatus, setLanguage, setSize } from '@/utils/sessionStorage'
 import { getLocale } from '@/lang'
-import store from '@/store'
 
-export enum DeviceType {
-  Mobile,
-  Desktop,
-}
+import { IAppState, DeviceType } from "@/store/type";
+import { MutationTree, ActionTree } from 'vuex';
 
-export interface IAppState {
-  device: DeviceType
+const state: IAppState = {
+  device: DeviceType.Desktop,
   sidebar: {
-    opened: boolean
-    withoutAnimation: boolean
-  }
-  language: string
-  size: string
-}
-
-@Module({ dynamic: true, store, name: 'app' })
-class App extends VuexModule implements IAppState {
-  public sidebar = {
     opened: getSidebarStatus() !== 'closed',
     withoutAnimation: false
-  }
-  public device = DeviceType.Desktop
-  public language = getLocale()
-  public size = getSize() || 'mini'
+  },
+  size: getSize() || 'mini',
+  language: getLocale(),
+}
 
-  @Mutation
-  private TOGGLE_SIDEBAR(withoutAnimation: boolean) {
-    this.sidebar.opened = !this.sidebar.opened
-    this.sidebar.withoutAnimation = withoutAnimation
-    if (this.sidebar.opened) {
+const mutations: MutationTree<IAppState> = {
+  TOGGLE_SIDEBAR(state, withoutAnimation) {
+    state.sidebar.opened = !state.sidebar.opened
+    state.sidebar.withoutAnimation = withoutAnimation
+    if (state.sidebar.opened) {
       setSidebarStatus('opened')
     } else {
       setSidebarStatus('closed')
     }
-  }
-
-  @Mutation
-  private CLOSE_SIDEBAR(withoutAnimation: boolean) {
-    this.sidebar.opened = false
-    this.sidebar.withoutAnimation = withoutAnimation
+  },
+  CLOSE_SIDEBAR(state, withoutAnimation) {
+    state.sidebar.opened = false
+    state.sidebar.withoutAnimation = withoutAnimation
     setSidebarStatus('closed')
-  }
-
-  @Mutation
-  private TOGGLE_DEVICE(device: DeviceType) {
-    this.device = device
-  }
-
-  @Mutation
-  private SET_LANGUAGE(language: string) {
-    this.language = language
-    setLanguage(this.language)
-  }
-
-  @Mutation
-  private SET_SIZE(size: string) {
-    this.size = size
-    setSize(this.size)
-  }
-
-  @Action
-  public ToggleSideBar(withoutAnimation: boolean) {
-    this.TOGGLE_SIDEBAR(withoutAnimation)
-  }
-
-  @Action
-  public CloseSideBar(withoutAnimation: boolean) {
-    this.CLOSE_SIDEBAR(withoutAnimation)
-  }
-
-  @Action
-  public ToggleDevice(device: DeviceType) {
-    this.TOGGLE_DEVICE(device)
-  }
-
-  @Action
-  public SetLanguage(language: string) {
-    this.SET_LANGUAGE(language)
-  }
-
-  @Action
-  public SetSize(size: string) {
-    this.SET_SIZE(size)
+  },
+  TOGGLE_DEVICE(state, device) {
+    state.device = device
+  },
+  SET_LANGUAGE(state, language) {
+    state.language = language
+    setLanguage(state.language)
+  },
+  SET_SIZE(state, size) {
+    state.size = size
+    setSize(state.size)
   }
 }
 
-export const AppModule = getModule(App)
+const actions: ActionTree<IAppState, IAppState> = {
+  ToggleSideBar({ commit }, withoutAnimation) {
+    commit('TOGGLE_SIDEBAR', withoutAnimation)
+  },
+
+  CloseSideBar({ commit }, withoutAnimation) {
+    commit('CLOSE_SIDEBAR', withoutAnimation)
+  },
+
+  ToggleDevice({ commit }, device) {
+    commit('TOGGLE_DEVICE', device)
+  },
+
+  SetLanguage({ commit }, language) {
+    commit('SET_LANGUAGE', language)
+  },
+
+  SetSize({ commit }, size) {
+    commit('SET_SIZE', size)
+  }
+}
+
+export default {
+  namespaced: false,
+  state,
+  mutations,
+  actions,
+}

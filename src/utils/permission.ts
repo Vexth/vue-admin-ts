@@ -1,8 +1,8 @@
-import { UserModule } from '@/store/modules/user'
+import store from "@/store";
 
 export const checkPermission = (value: string[]): boolean => {
   if (value && value instanceof Array && value.length > 0) {
-    const roles = UserModule.roles
+    const roles = store.getters.roles
     const permissionRoles = value
     const hasPermission = roles.some((role: any) => {
       return permissionRoles.includes(role)

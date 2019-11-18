@@ -1,38 +1,36 @@
-import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
-import store from '@/store'
 import elementVariables from '@/styles/element-variables.scss'
 import defaultSettings from '@/settings'
 
-export interface ISettingsState {
-  theme: string
-  fixedHeader: boolean
-  showSettings: boolean
-  showTagsView: boolean
-  showSidebarLogo: boolean
-  sidebarTextTheme: boolean
+import { ISettingsState } from "@/store/type";
+import { MutationTree, ActionTree } from 'vuex';
+
+const state: ISettingsState = {
+  theme: elementVariables.theme,
+  fixedHeader: defaultSettings.fixedHeader,
+  showSettings: defaultSettings.showSettings,
+  showTagsView: defaultSettings.showTagsView,
+  showSidebarLogo: defaultSettings.showSidebarLogo,
+  sidebarTextTheme: defaultSettings.sidebarTextTheme,
 }
 
-@Module({ dynamic: true, store, name: 'settings' })
-class Settings extends VuexModule implements ISettingsState {
-  public theme = elementVariables.theme
-  public fixedHeader = defaultSettings.fixedHeader
-  public showSettings = defaultSettings.showSettings
-  public showTagsView = defaultSettings.showTagsView
-  public showSidebarLogo = defaultSettings.showSidebarLogo
-  public sidebarTextTheme = defaultSettings.sidebarTextTheme
-
-  @Mutation
-  private CHANGE_SETTING(payload: { key: string, value: any }) {
+const mutations: MutationTree<ISettingsState> = {
+  CHANGE_SETTING(state, payload) {
     const { key, value } = payload
     if (Object.prototype.hasOwnProperty.call(this, key)) {
-      (this as any)[key] = value
+      (state as any)[key] = value
     }
-  }
-
-  @Action
-  public ChangeSetting(payload: { key: string, value: any}) {
-    this.CHANGE_SETTING(payload)
   }
 }
 
-export const SettingsModule = getModule(Settings)
+const actions: ActionTree<ISettingsState, ISettingsState> = {
+  ChangeSetting({ commit }, payload) {
+    commit('CHANGE_SETTING', payload)
+  }
+}
+
+export default {
+  namespaced: false,
+  state,
+  mutations,
+  actions,
+}

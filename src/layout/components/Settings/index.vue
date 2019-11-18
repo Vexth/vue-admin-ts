@@ -50,7 +50,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { SettingsModule } from '@/store/modules/settings'
 import ThemePicker from '@/components/ThemePicker/index.vue'
 
 @Component({
@@ -61,39 +60,39 @@ import ThemePicker from '@/components/ThemePicker/index.vue'
 })
 export default class Settings extends Vue {
   get fixedHeader() {
-    return SettingsModule.fixedHeader
+    return this.$store.getters.fixedHeader
   }
 
   set fixedHeader(value) {
-    SettingsModule.ChangeSetting({ key: 'fixedHeader', value })
+    this.$store.dispatch('ChangeSetting', { key: 'fixedHeader', value })
   }
 
   get showTagsView() {
-    return SettingsModule.showTagsView
+    return this.$store.getters.showTagsView
   }
 
   set showTagsView(value) {
-    SettingsModule.ChangeSetting({ key: 'showTagsView', value })
+    this.$store.dispatch('ChangeSetting', { key: 'showTagsView', value })
   }
 
   get showSidebarLogo() {
-    return SettingsModule.showSidebarLogo
+    return this.$store.getters.showSidebarLogo
   }
 
   set showSidebarLogo(value) {
-    SettingsModule.ChangeSetting({ key: 'showSidebarLogo', value })
+    this.$store.dispatch('ChangeSetting', { key: 'showSidebarLogo', value })
   }
 
   get sidebarTextTheme() {
-    return SettingsModule.sidebarTextTheme
+    return this.$store.getters.sidebarTextTheme
   }
 
   set sidebarTextTheme(value) {
-    SettingsModule.ChangeSetting({ key: 'sidebarTextTheme', value })
+    this.$store.dispatch('ChangeSetting', { key: 'sidebarTextTheme', value })
   }
 
   private themeChange(value: string) {
-    SettingsModule.ChangeSetting({ key: 'theme', value })
+    this.$store.dispatch('ChangeSetting', { key: 'theme', value })
   }
 }
 </script>

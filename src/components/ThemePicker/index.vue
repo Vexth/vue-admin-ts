@@ -9,7 +9,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { SettingsModule } from '@/store/modules/settings'
 
 const version = require('element-ui/package.json').version // element-ui version from node_modules
 const ORIGINAL_THEME = '#409EFF' // default color
@@ -22,7 +21,7 @@ export default class ThemePicker extends Vue {
   private theme = ''
 
   get defaultTheme() {
-    return SettingsModule.theme
+    return this.$store.getters.theme
   }
 
   @Watch('defaultTheme', { immediate: true })

@@ -157,7 +157,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
 import local from './local'
 
 @Component({
@@ -189,11 +188,11 @@ export default class I18n extends Vue {
   }]
 
   get lang() {
-    return AppModule.language
+    return this.$store.getters.language
   }
 
   set lang(lang) {
-    (AppModule as any).SetLanguage(lang)
+    this.$store.dispatch('SetLanguage', lang)
     this.$i18n.locale = lang
     this.setOptions()
   }

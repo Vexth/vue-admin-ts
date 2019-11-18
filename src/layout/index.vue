@@ -27,11 +27,10 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { DeviceType, AppModule } from '@/store/modules/app'
-import { SettingsModule } from '@/store/modules/settings'
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import RightPanel from '@/components/RightPanel/index.vue'
 import ResizeMixin from './mixin/resize'
+import { DeviceType } from "@/store/type";
 
 @Component({
   name: 'Layout',
@@ -55,19 +54,19 @@ export default class extends Mixins(ResizeMixin) {
   }
 
   get showSettings() {
-    return SettingsModule.showSettings
+    return this.$store.getters.showSettings
   }
 
   get showTagsView() {
-    return SettingsModule.showTagsView
+    return this.$store.getters.showTagsView
   }
 
   get fixedHeader() {
-    return SettingsModule.fixedHeader
+    return this.$store.getters.fixedHeader
   }
 
   private handleClickOutside() {
-    AppModule.CloseSideBar(false)
+    this.$store.dispatch('CloseSideBar', false)
   }
 }
 </script>

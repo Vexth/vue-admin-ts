@@ -26,8 +26,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
-import { TagsViewModule } from '@/store/modules/tags-view'
 
 @Component({
   name: 'SizeSelect'
@@ -41,12 +39,12 @@ export default class SizeSelect extends Vue {
   ]
 
   get size() {
-    return AppModule.size
+    return this.$store.getters.size;
   }
 
   private handleSetSize(size: string) {
     (this as any).$ELEMENT.size = size
-    AppModule.SetSize(size)
+    this.$store.dispatch('SetSize', size)
     this.refreshView()
     this.$message({
       message: 'Switch Size Success',
@@ -56,7 +54,7 @@ export default class SizeSelect extends Vue {
 
   private refreshView() {
     // In order to make the cached page re-rendered
-    TagsViewModule.delAllCachedViews()
+    this.$store.dispatch('delAllCachedViews')
     const { fullPath } = this.$route
     this.$nextTick(() => {
       this.$router.replace({

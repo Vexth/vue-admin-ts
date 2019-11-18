@@ -23,7 +23,6 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { addClass, removeClass } from '@/utils'
-import { SettingsModule } from '@/store/modules/settings'
 
 @Component({
   name: 'RightPanel'
@@ -35,7 +34,7 @@ export default class RightPanel extends Vue {
   private show = false
 
   get theme() {
-    return SettingsModule.theme
+    return this.$store.getters.theme
   }
 
   @Watch('show')

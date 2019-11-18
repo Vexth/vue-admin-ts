@@ -55,9 +55,8 @@
 import path from 'path'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import VueRouter, { Route, RouteRecord, RouteConfig } from 'vue-router'
-import { PermissionModule } from '@/store/modules/permission'
-import { TagsViewModule, ITagView } from '@/store/modules/tags-view'
 import ScrollPane from './ScrollPane.vue'
+import { ITagView } from "@/store/type";
 
 @Component({
   name: 'TagsView',
@@ -73,11 +72,11 @@ export default class TagsView extends Vue {
   private affixTags: ITagView[] = []
 
   get visitedViews() {
-    return TagsViewModule.visitedViews
+    return this.$store.getters.visitedViews
   }
 
   get routes() {
-    return PermissionModule.routes
+    return this.$store.getters.routes
   }
 
   @Watch('$route')
@@ -135,7 +134,7 @@ export default class TagsView extends Vue {
     for (const tag of this.affixTags) {
       // Must have tag name
       if (tag.name) {
-        TagsViewModule.addVisitedView(tag)
+        this.$store.dispatch('addVisitedView', tag)
       }
     }
   }
@@ -143,7 +142,7 @@ export default class TagsView extends Vue {
   private addTags() {
     const { name } = this.$route
     if (name) {
-      TagsViewModule.addView(this.$route)
+      this.$store.dispatch('addView', this.$route)
     }
     return false
   }
@@ -156,7 +155,7 @@ export default class TagsView extends Vue {
           (this.$refs.scrollPane as ScrollPane).moveToTarget(tag as any)
           // When query is different then update
           if ((tag.to as ITagView).fullPath !== this.$route.fullPath) {
-            TagsViewModule.updateVisitedView(this.$route)
+            this.$store.dispatch('updateVisitedView', this.$route)
           }
           break
         }
@@ -165,7 +164,7 @@ export default class TagsView extends Vue {
   }
 
   private refreshSelectedTag(view: ITagView) {
-    TagsViewModule.delCachedView(view)
+    this.$store.dispatch('delCachedView', view)
     const { fullPath } = view
     this.$nextTick(() => {
       this.$router.replace({
@@ -175,24 +174,24 @@ export default class TagsView extends Vue {
   }
 
   private closeSelectedTag(view: ITagView) {
-    TagsViewModule.delView(view)
+    this.$store.dispatch('delView', view)
     if (this.isActive(view)) {
-      this.toLastView(TagsViewModule.visitedViews, view)
+      this.toLastView(this.$store.getters.visitedViews, view)
     }
   }
 
   private closeOthersTags() {
     this.$router.push(this.selectedTag)
-    TagsViewModule.delOthersViews(this.selectedTag)
+    this.$store.dispatch('delOthersViews', this.selectedTag)
     this.moveToCurrentTag()
   }
 
   private closeAllTags(view: ITagView) {
-    TagsViewModule.delAllViews()
+    this.$store.dispatch('delAllViews')
     if (this.affixTags.some(tag => tag.path === this.$route.path)) {
       return
     }
-    this.toLastView(TagsViewModule.visitedViews, view)
+    this.toLastView(this.$store.getters.visitedViews, view)
   }
 
   private toLastView(visitedViews: ITagView[], view: ITagView) {

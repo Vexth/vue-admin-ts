@@ -35,8 +35,6 @@ import path from 'path'
 import Fuse from 'fuse.js' // A lightweight fuzzy-search module
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { RouteConfig } from 'vue-router'
-import { AppModule } from '@/store/modules/app'
-import { PermissionModule } from '@/store/modules/permission'
 import i18n from '@/lang' // Internationalization
 
 @Component({
@@ -50,11 +48,11 @@ export default class HeaderSearch extends Vue {
   private fuse?: Fuse<RouteConfig>
 
   get routes() {
-    return PermissionModule.routes
+    return this.$store.getters.routes
   }
 
   get lang() {
-    return AppModule.language
+    return this.$store.getters.language
   }
 
   @Watch('lang')

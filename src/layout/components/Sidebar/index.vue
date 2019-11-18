@@ -29,9 +29,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
-import { PermissionModule } from '@/store/modules/permission'
-import { SettingsModule } from '@/store/modules/settings'
+// import { AppModule } from '@/store/modules/app'
+// import { PermissionModule } from '@/store/modules/permission'
+// import { SettingsModule } from '@/store/modules/settings'
 import SidebarItem from './SidebarItem.vue'
 import SidebarLogo from './SidebarLogo.vue'
 import variables from '@/styles/_variables.scss'
@@ -45,20 +45,20 @@ import variables from '@/styles/_variables.scss'
 })
 export default class SideBar extends Vue {
   get sidebar() {
-    return AppModule.sidebar
+    return this.$store.getters.sidebar
   }
 
   get routes() {
-    return PermissionModule.routes
+    return this.$store.getters.routes
   }
 
   get showLogo() {
-    return SettingsModule.showSidebarLogo
+    return this.$store.getters.showSidebarLogo
   }
 
   get menuActiveTextColor() {
-    if (SettingsModule.sidebarTextTheme) {
-      return SettingsModule.theme
+    if (this.$store.getters.sidebarTextTheme) {
+      return this.$store.getters.theme
     } else {
       return variables.menuActiveText
     }

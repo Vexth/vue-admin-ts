@@ -41,19 +41,18 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
 
 @Component({
   name: 'LangSelect'
 })
 export default class LangSelect extends Vue {
   get language() {
-    return AppModule.language
+    return this.$store.getters.language
   }
 
   private handleSetLanguage(lang: string) {
     (this as any).$i18n.locale = lang
-    AppModule.SetLanguage(lang)
+    this.$store.dispatch('SetLanguage', lang)
     this.$message({
       message: 'Switch Language Success',
       type: 'success'

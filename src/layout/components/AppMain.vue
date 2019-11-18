@@ -13,14 +13,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { TagsViewModule } from '@/store/modules/tags-view'
 
 @Component({
   name: 'AppMain'
 })
 export default class AppMain extends Vue {
   get cachedViews() {
-    return TagsViewModule.cachedViews
+    return this.$store.getters.cachedViews
   }
 
   get key() {
@@ -41,7 +40,8 @@ export default class AppMain extends Vue {
 .fixed-header+.app-main {
   padding-top: 50px;
   height: 100vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .hasTagsView {

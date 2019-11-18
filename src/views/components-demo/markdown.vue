@@ -71,7 +71,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
 const content = `
@@ -109,7 +108,7 @@ export default class MarkdownDemo extends Vue {
   }
 
   get language() {
-    return this.languageTypeList[AppModule.language]
+    return this.languageTypeList[this.$store.getters.language]
   }
 
   private getHtml() {
