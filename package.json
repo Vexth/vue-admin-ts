@@ -46,7 +46,7 @@
     "showdown": "^1.9.1",
     "sortablejs": "^1.10.1",
     "swagger-routes-express": "^3.1.1",
-    "tinymce": "^5.1.1",
+    "tinymce": "^5.1.4",
     "ts-node-dev": "^1.0.0-pre.44",
     "tui-editor": "^1.4.7",
     "vue": "^2.6.10",
